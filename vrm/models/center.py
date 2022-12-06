@@ -1,5 +1,5 @@
 from django.db import models
-from vrm.models.schedule import Ay
+from utils.models import Ay
 from utils.choicess import *
 from accounts.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -11,7 +11,7 @@ class School(models.Model):
     SCHOOL_TYPE_CHOICESS = ((1, 'Co-Educational'), (2, 'Boys Only'),(3, 'Girls Only'))
     REGION_CHOICESS = ((1, 'Rural'), (2, 'Urban'))
     BUILDING_CHOICESS = ((1, 'Unknown'), (2, 'Poor'), (3, 'Good'))
-    FURNITURE_CHOICESS = ((1, 'Have None'), (2, 'Require More') (3, 'Poor'), (4, 'Good'))
+    FURNITURE_CHOICESS = ((1, 'Have None'), (2, 'Require More'), (3, 'Poor'), (4, 'Good'))
     
     
     name                    = models.CharField(max_length=256, null=True, blank=True)
@@ -39,8 +39,8 @@ class School(models.Model):
     teachers_male           = models.IntegerField(null=True, blank=True)
     teachers_female         = models.IntegerField(null=True, blank=True)
     principal               = models.CharField(max_length=128, null=True, blank=True)
-    refer_by                = models.ForeignKey(User, null=True, blank=True)
-    academic_year           = models.ForeignKey(Ay, null=True, blank=True)
+    refer_by                = models.ForeignKey(User, null=True, blank=True, on_delete=models.DO_NOTHING)
+    academic_year           = models.ForeignKey(Ay, null=True, blank=True, on_delete=models.DO_NOTHING)
     building_status         = models.IntegerField(choices=BUILDING_CHOICESS, default=1)
     furniture               = models.IntegerField(choices=FURNITURE_CHOICESS, default=1)
     library                 = models.BooleanField(default=False)
@@ -77,14 +77,24 @@ class Center(models.Model):
     skype_id = models.CharField(max_length=256, null=True, blank=True)
     location_map = models.CharField(max_length=1024, null=True, blank=True)
     
-    field_coordinator = models.ForeignKey(User, null=True, blank=True, related_name='center_field_coordinator')
-    delivery_coordinator = models.ForeignKey(User, null=True, blank=True, related_name='center_delivery_coordinator')
-    admin = models.ForeignKey(User, null=True, blank=True, related_name='center_admin')
-    assistant = models.ForeignKey(User, null=True, blank=True, related_name='center_assistant')
+    field_coordinator = models.ForeignKey(User, null=True, blank=True, related_name='center_field_coordinator', on_delete=models.DO_NOTHING)
+    delivery_coordinator = models.ForeignKey(User, null=True, blank=True, related_name='center_delivery_coordinator', on_delete=models.DO_NOTHING)
+    admin = models.ForeignKey(User, null=True, blank=True, related_name='center_admin', on_delete=models.DO_NOTHING)
+    assistant = models.ForeignKey(User, null=True, blank=True, related_name='center_assistant', on_delete=models.DO_NOTHING)
     
-    school = models.ForeignKey(School, null=True, blank=True)
+    school = models.ForeignKey(School, null=True, blank=True, on_delete=models.DO_NOTHING)
     program_type = models.IntegerField(null=True, blank=True, choices=((1,'Digital Classroom'), (2,'Digital School'), (3,'Sampoorna')), default=1)
     is_test = models.BooleanField(default=False)
     
     def __str__(self):
         return self.name
+    
+
+class Holiday(models.Model):
+    day = models.DateTimeField(null=True, blank=True)
+    description = models.CharField(max_length=1024, blank=True, null=True)
+    ay = models.ForeignKey(Ay, on_delete=models.CASCADE)
+    center = models.ForeignKey(Center, blank=True, null=True, on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return  "%s-%s" %(self.day, self.ay)

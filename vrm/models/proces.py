@@ -1,4 +1,3 @@
-from tkinter import CASCADE
 from accounts.models import User
 from django.db import models
 
@@ -22,8 +21,8 @@ class RolePreference(models.Model):
     ROLE_OUTCOME_CHOICESS = ((1,'Not Started'), (2,'Inprocess'), (3,'Recommended'), (4,'Recommended for Alternate Role'), (5,'Not Eligible'))
     
     
-    user = models.ForeignKey(User, on_delete=CASCADE)
-    role = models.ForeignKey(Role, on_delete=CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    role = models.ForeignKey(Role, on_delete=models.CASCADE)
     status = models.IntegerField(choices=ROLE_STATUS_CHOICESS, default=1)
     role_outcome = models.IntegerField(choices=ROLE_OUTCOME_CHOICESS, default=1)
     recommended_on = models.DateTimeField(null=True, blank=True)
@@ -36,7 +35,7 @@ class RolePreference(models.Model):
         
 class RoleStep(models.Model):
     
-    role = models.ForeignKey(Role, on_delete=CASCADE)
+    role = models.ForeignKey(Role, on_delete=models.CASCADE)
     stepname = models.CharField(max_length = 50, blank=True, null=True)
     description = models.CharField(max_length = 1024, blank=True, null=True)
     weightage = models.IntegerField( default = 0)
@@ -53,9 +52,9 @@ class SelectionDiscussionSlot(models.Model):
     SLOT_CHOICESS = ((1, 'Not Booked'),(2, 'Booked'))
     OUTCOME_CHOICESS = ((1, 'Scheduled'),(2, 'Assigned'),(3, 'Completed'), (4, 'Cancelled'))
     
-    user = models.ForeignKey(User, null=True, blank=True)
-    role = models.ForeignKey(Role, null=True, blank=True, default=None)
-    panel = models.ForeignKey(User, null=True, blank=True, related_name="panel_member")
+    user = models.ForeignKey(User, null=True, blank=True, on_delete=models.DO_NOTHING)
+    role = models.ForeignKey(Role, null=True, blank=True, default=None, on_delete=models.CASCADE)
+    panel = models.ForeignKey(User, null=True, blank=True, related_name="panel_member", on_delete=models.DO_NOTHING)
     booked_date = models.DateTimeField(null=True,blank=True)
     start_time = models.DateTimeField(null=True,blank=True)
     end_time = models.DateTimeField(blank=True, null=True)

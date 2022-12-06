@@ -9,11 +9,11 @@ from django.conf import settings
 class User(AbstractUser):
     
     username_validator = UnicodeUsernameIdValidator()
-    username = models.IntegerField(
-        _("username"),
+    username = models.CharField(
+        _("username"), max_length=12,
         unique=True,
         help_text=_(
-            "Required. digits only."
+            "Required. user id only."
         ),
         validators=[username_validator],
         error_messages={
