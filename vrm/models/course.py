@@ -10,16 +10,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from utils.models import Language
 from django.conf import settings
 from accounts.models import User
-
-
-class Role(models.Model):
-    name = models.CharField(max_length=128, null=True, blank=True)
-    description = models.CharField(max_length=1024, null=True, blank=True)
-    type = models.IntegerField(choices=((1,'Internal'), (2,'External')), default=2)
-    
-    def __str__(self):
-        return self.name
-    
+ 
 
 class Course(models.Model):
     board = models.CharField(max_length=128,choices=BOARD_CHOICESS, null=True, blank=True)
@@ -64,7 +55,7 @@ class Offering(models.Model):
     ay =  models.ForeignKey(Ay, null=True, blank=True, on_delete=models.DO_NOTHING)
     start_date = models.DateTimeField(null=True, blank=True)
     end_date = models.DateTimeField(null=True, blank=True)
-    topic = models.ManyToManyField(Topic, null=True, blank=True)
+    topic = models.ManyToManyField(Topic, blank=True)
     status = models.IntegerField(choices=((1, 'pending'),(2, 'running'),(3, 'completed')), default=1)
     student = models.ManyToManyField(User, related_name='enrolled_students')
     teacher = models.ForeignKey(User, null=True, blank=True, related_name='current_teacher', on_delete=models.DO_NOTHING)
@@ -93,7 +84,7 @@ class Session(models.Model):
     
     
     offering = models.ForeignKey(Offering, on_delete=models.CASCADE)
-    topic = models.ManyToManyField(Topic, null=True, blank=True)
+    topic = models.ManyToManyField(Topic, blank=True)
     subtopic = models.ForeignKey(SubTopic, null=True, blank=True, on_delete=models.CASCADE)
     
     start_date = models.DateTimeField(null=True, blank=True)

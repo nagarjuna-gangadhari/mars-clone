@@ -17,14 +17,16 @@ from django.contrib import admin
 from django.urls import path, re_path, include
 from django.conf.urls.static import static
 from django.conf import settings
+from django.views.generic import TemplateView
 
 
 urlpatterns = [
+    path('', TemplateView.as_view(template_name='generic.html')),
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls')),
     # path('auth/', include('djoser.urls')),
     # path('auth/', include('djoser.urls.authtoken')),
     path('auth/', include('djoser.urls.jwt')),
-    path('', include('vrm.urls')),
+    path('api/v1/', include('vrm.urls')),
     
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

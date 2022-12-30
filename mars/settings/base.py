@@ -15,11 +15,11 @@ SECRET_KEY = 'django-insecure-v$)f48%22o7r_!2o9nt05u)djo038*q!b^9dvb@659me$s-r&y
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
-# CORS_ALLOWED_ORIGINS = ['http://localhost:5173', 'http://127.0.0.1:8000']
+ALLOWED_HOSTS = ['*']
 CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = ['http://localhost:5173', 'http://127.0.0.1:8000', 'https://5174-nagarjunagangadh-titan-h373mvfxkwx.ws-us80.gitpod.io']
 
+CSRF_TRUSTED_ORIGINS = ['https://*.gitpod.io']
 # Application definition
 
 
@@ -45,10 +45,10 @@ LOCAL_APPS = [
 INSTALLED_APPS = DJANGO_APPS + LOCAL_APPS
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
     "corsheaders.middleware.CorsMiddleware",
     'django.middleware.common.CommonMiddleware',
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',

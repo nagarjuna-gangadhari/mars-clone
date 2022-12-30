@@ -1,9 +1,10 @@
 from django.urls import path, include
 from .views import home_views
-from .viewsets import UserViewSet
+from .viewsets import UserViewSet, CourseViewSet
 
 
 urlpatterns = [
-    path('', home_views.Home.as_view()),
-    path('api/v1/profile/', UserViewSet.as_view({'get': 'get'})),   
+    
+    path('profile/', UserViewSet.as_view({'get':'get'})),
+    path('course/', CourseViewSet.as_view({'get':'get'}))   
 ]
