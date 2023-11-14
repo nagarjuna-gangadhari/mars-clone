@@ -28,5 +28,6 @@ urlpatterns = [
     # path('auth/', include('djoser.urls.authtoken')),
     path('auth/', include('djoser.urls.jwt')),
     path('api/v1/', include('vrm.urls')),
+    path('chat/', include('chat.urls')),
     
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

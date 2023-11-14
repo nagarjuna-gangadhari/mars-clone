@@ -24,6 +24,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 
 DJANGO_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -40,6 +41,9 @@ LOCAL_APPS = [
     'utils',
     'accounts',
     'vrm',
+    'query',
+    'notification',
+    'chat',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + LOCAL_APPS
@@ -57,6 +61,11 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'mars.urls'
 
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+}
 
 
 REST_FRAMEWORK = {
@@ -93,6 +102,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'mars.wsgi.application'
+ASGI_APPLICATION = "mars.asgi.application"
 
 
 # Database
