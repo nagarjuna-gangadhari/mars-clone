@@ -21,9 +21,7 @@ class LoginPageView(View):
         username=request.POST.get('username', None)
         password=request.POST.get('password', None)
         next = request.POST.get('next', None)
-        
-        print(request.GET)
-        
+                
         try:
             if username and password and isinstance(int(username), int):
                 user = authenticate(
