@@ -18,12 +18,12 @@ class UserProfileViewSet(viewsets.ViewSet):
     # permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        data = User.objects.filter(id=request.user.id).values('username', 'email', 'first_name', 'last_name').first()
+        data = User.objects.filter(id=request.user.id).values('username', 'email', 'first_name', 'last_name', 'date_joined').first()
         profile = Profile.objects.filter(user=request.user).first()
         data['terms'] = profile.terms
         data['reference'] = profile.reference.email
         data['dob'] = profile.dob
-        data['mobile'] = profile.phone
+        data['mobile'] = profile.mobile
         data['gender'] = [{'id':g[0], 'name':g[1]} for g in profile.Gender.choices if g[0]==profile.gender][0]
         data['genders'] = [{'id':g[0], 'name':g[1]} for g in profile.Gender.choices]
         data['country'] = profile.location.country

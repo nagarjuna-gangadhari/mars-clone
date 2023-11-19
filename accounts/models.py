@@ -75,7 +75,7 @@ class Profile(TimeStampedModel):
     terms = models.BooleanField(default=False)
     reference = models.ForeignKey("accounts.User", null=True, blank=True, related_name="referer", on_delete=models.DO_NOTHING)
     dob = models.DateField(null=True, blank=True)
-    phone = models.TextField(max_length=12, null=True, blank=True)
+    mobile = models.CharField(max_length=12, null=True, blank=True)
     gender = models.IntegerField(choices=Gender.choices, default=100)
     location = models.ForeignKey("accounts.Location", null=True, blank=True, related_name="location", on_delete=models.DO_NOTHING)
     pincode = models.IntegerField(null=True, blank=True)
@@ -83,6 +83,7 @@ class Profile(TimeStampedModel):
     education = models.IntegerField(choices=Education.choices, null=True, blank=True)
     linkedIn = models.CharField(max_length=256, null=True, blank=True)
     step = models.IntegerField(default=1)
+    about = models.TextField(null=True, blank=True)
 
 
     def __str__(self):
