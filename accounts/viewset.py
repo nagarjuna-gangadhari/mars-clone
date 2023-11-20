@@ -60,15 +60,10 @@ class UserProfileViewSet(viewsets.ViewSet):
                 a['history'] = q
             k.append(a)
         data['roles'] = k
-        lm = []
 
-        prfs = NotificationPreference.objects.filter(user=request.user).values()
-        for p in NotificationPreference.Type.choices:
-            o = list(filter(lambda x: x.type==p[1], prfs))
-            if o: o = o[0]      
-            else: o = {'id':p[0], 'type':p[1], 'status':False}
-            lm.append(o)
-        data['preferences'] = lm
+        prfs = NotificationPreference.objects.filter(user=request.user).values('email', 'sms', 'watsapp').first()
+        print(prfs)
+        data['preferences'] = prfs
 
         return Response(data)
 

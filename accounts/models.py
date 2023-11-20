@@ -156,11 +156,7 @@ class RoleHistory(TimeStampedModel):
 
 class NotificationPreference(TimeStampedModel):
 
-    class Type(models.IntegerChoices):
-        EMAIL = 1
-        SMS = 2
-        WATSAPP = 3
-
     user = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
-    type = models.IntegerField(choices=Type.choices, null=True, blank=True)
-    status = models.BooleanField(default=False)
+    email = models.BooleanField(default=False)
+    sms = models.BooleanField(default=False)
+    watsapp = models.BooleanField(default=False)
