@@ -3,8 +3,12 @@ from django.contrib.auth.admin import UserAdmin
 from .models import *
 
 
-class UserAdmin(UserAdmin):
-    model = User
+# class UserAdmin(UserAdmin):
+#     model = User
+
+class LocationAdmin(admin.ModelAdmin):
+    model = Location
+    list_display = ['id', 'country', 'state', 'city']
 
 class NotificationPreferenceAdmin(admin.ModelAdmin):
     model = NotificationPreference
@@ -12,7 +16,7 @@ class NotificationPreferenceAdmin(admin.ModelAdmin):
 
 admin.site.register(User, UserAdmin)
 admin.site.register(Profile, admin.ModelAdmin)
-admin.site.register(Location, admin.ModelAdmin)
+admin.site.register(Location, LocationAdmin)
 admin.site.register(Role, admin.ModelAdmin)
 admin.site.register(UserRoleMaping, admin.ModelAdmin)
 admin.site.register(UserRoleMeeting, admin.ModelAdmin)

@@ -37,6 +37,7 @@ class UserProfileViewSet(viewsets.ViewSet):
         data['linkedIn'] = profile.linkedIn
         data['step'] = profile.step
         data['groups'] = request.user.groups.all().values_list('id', flat=True)
+        data['language'] = {'id': profile.language.id, 'name':profile.language.name}
         roles = Role.objects.filter(status=True)
 
         k = []
@@ -76,7 +77,9 @@ class LocationViewset(viewsets.ViewSet):
     # permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        context = Location.objects.all().values('id', 'country', 'state', 'city')
+        context = {}
+        context['locations'] = Location.objects.all().values('id', 'country', 'state', 'city')
+        context['languages'] = Language.objects.all().values('id', 'name', 'code')
         
         return Response(context)
 

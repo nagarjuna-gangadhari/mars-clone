@@ -4,7 +4,6 @@ from django.utils.translation import gettext_lazy as _
 from .validators import UnicodeUsernameIdValidator
 from django.conf import settings
 
-
 class User(AbstractUser):
     username_validator = UnicodeUsernameIdValidator()
     username = models.CharField(
@@ -71,7 +70,7 @@ class Profile(TimeStampedModel):
         Female = 2
         Others = 100
 
-    user = models.ForeignKey("accounts.User", related_name="user", on_delete=models.CASCADE)
+    user = models.OneToOneField("accounts.User", related_name="user", on_delete=models.CASCADE)
     terms = models.BooleanField(default=False)
     reference = models.ForeignKey("accounts.User", null=True, blank=True, related_name="referer", on_delete=models.DO_NOTHING)
     dob = models.DateField(null=True, blank=True)
@@ -82,8 +81,9 @@ class Profile(TimeStampedModel):
     profession = models.IntegerField(choices=Profession.choices, null=True, blank=True)
     education = models.IntegerField(choices=Education.choices, null=True, blank=True)
     linkedIn = models.CharField(max_length=256, null=True, blank=True)
-    step = models.IntegerField(default=1)
+    step = models.IntegerField(default=1)   
     about = models.TextField(null=True, blank=True)
+    language = models.ForeignKey('utils.Language', null=True, blank=True, on_delete=models.DO_NOTHING)
 
 
     def __str__(self):
@@ -155,7 +155,6 @@ class RoleHistory(TimeStampedModel):
 
 
 class NotificationPreference(TimeStampedModel):
-
     user = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
     email = models.BooleanField(default=False)
     sms = models.BooleanField(default=False)
