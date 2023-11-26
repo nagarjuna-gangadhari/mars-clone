@@ -38,6 +38,7 @@ class UserProfileViewSet(viewsets.ViewSet):
         data['step'] = profile.step
         data['groups'] = request.user.groups.all().values_list('id', flat=True)
         data['language'] = {'id': profile.language.id, 'name':profile.language.name}
+        data['about'] = profile.about
         roles = Role.objects.filter(status=True)
 
         k = []
@@ -63,10 +64,34 @@ class UserProfileViewSet(viewsets.ViewSet):
         data['roles'] = k
 
         prfs = NotificationPreference.objects.filter(user=request.user).values('email', 'sms', 'watsapp').first()
-        print(prfs)
         data['preferences'] = prfs
 
         return Response(data)
+
+
+    def post(self, request):
+        userkeys = ["email", "first_name", "last_name", ] 
+        profile_direct = ["terms", "reference", "dob", "mobile", "pincode",  "linkedIn", "step", 'abount']
+        profile_process1 = ["gender", "country", "state", "city","profession","language",]
+        data = request.data['data']
+        print(data)
+        userDict = {}   
+        profileDict = {}
+        for key, val in data.items():
+            if key in userkeys: userDict[key]=val
+            elif key in profile_direct: profileDict[key]=val
+            elif key in profile_process1: profileDict[key]=val['id']
+            elif key=='preferences':
+                pass
+            elif key=='roles':
+                pass
+
+
+
+        print(userDict)
+        print(profileDict)
+        return Response({})
+    
 
 class LocationViewset(viewsets.ViewSet):
 
