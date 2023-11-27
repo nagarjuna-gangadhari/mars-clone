@@ -78,8 +78,8 @@ class Profile(TimeStampedModel):
     gender = models.IntegerField(choices=Gender.choices, default=100)
     location = models.ForeignKey("accounts.Location", null=True, blank=True, related_name="location", on_delete=models.DO_NOTHING)
     pincode = models.IntegerField(null=True, blank=True)
-    profession = models.IntegerField(choices=Profession.choices, null=True, blank=True)
-    education = models.IntegerField(choices=Education.choices, null=True, blank=True)
+    profession = models.IntegerField(choices=Profession.choices, default=100)
+    education = models.IntegerField(choices=Education.choices, default=100)
     linkedIn = models.CharField(max_length=256, null=True, blank=True)
     step = models.IntegerField(default=1)   
     about = models.TextField(null=True, blank=True)
@@ -102,15 +102,19 @@ class Role(TimeStampedModel):
     type = models.IntegerField('Type', 'INTERNAL EXTERNAL', null=True, blank=True)
     status = models.BooleanField(default=False)
 
+    def __str__(self):
+        return str(self.pk)
+
 
 class UserRoleMaping(TimeStampedModel):
 
     class Status(models.IntegerChoices):
-        OPTED = 1 
-        POST_DISCUSSION = 2
-        SCHEDULED = 3
-        IN_REVIEW = 4
-        RECOMMENDED = 5 
+        NOT_OPTED = 1
+        OPTED = 2
+        POST_DISCUSSION = 3
+        SCHEDULED = 4
+        IN_REVIEW = 5
+        RECOMMENDED = 6
         REJECTED = 100
 
     user = models.ForeignKey('accounts.User', related_name='role_map_user', on_delete=models.CASCADE)
@@ -122,6 +126,9 @@ class UserRoleMaping(TimeStampedModel):
     recommendedOn = models.DateTimeField(null=True, blank=True)
     notes = models.CharField(max_length=256, null=True, blank=True)
     active = models.BooleanField(default=False)
+
+    def __str__(self):
+        return str(self.pk)
     
 
 class UserRoleMeeting(models.Model):
@@ -138,11 +145,12 @@ class UserRoleMeeting(models.Model):
     date = models.DateTimeField(null=True,blank=True)
     start_time = models.DateTimeField(null=True,blank=True)
     end_time = models.DateTimeField(blank=True, null=True)
+    # meetingLink = models.CharField(max_length=256, null=True, blank=True)
     outcome = models.IntegerField('Status', 'RECOMMENDED NOT_RECOMMENDED', null=True, blank=True)
     status = models.IntegerField(choices=Outcome.choices, default=1)
 
     def __str__(self):
-        return "%s-%s :%s" % (self.role.name, self.start_time, self.status)
+        return str(self.pk)
 
 
 class RoleHistory(TimeStampedModel):

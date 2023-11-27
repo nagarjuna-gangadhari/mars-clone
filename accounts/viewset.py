@@ -31,27 +31,27 @@ class UserProfileViewSet(viewsets.ViewSet):
         data['city'] = profile.location.city
         data['pincode'] = profile.pincode
         data['professions'] = [{'id':p[0], 'name':p[1]} for p in profile.Profession.choices]
-        data['profession'] = [{'id':p[0], 'name':p[1]} for p in profile.Profession.choices if p[0]==profile.profession][0] if profile.profession else data['professions'][-1]
+        data['profession'] = [{'id':p[0], 'name':p[1]} for p in profile.Profession.choices if p[0]==profile.profession][0]
         data['educations'] = [{'id':p[0], 'name':p[1]} for p in profile.Education.choices]
-        data['education'] = [{'id':e[0], 'name':e[1]} for e in profile.Education.choices if e[0]==profile.education][0] if profile.education else data['educations'][-1]
-        data['linkedIn'] = profile.linkedIn
+        data['education'] = [{'id':e[0], 'name':e[1]} for e in profile.Education.choices if e[0]==profile.education][0]
         data['step'] = profile.step
         data['groups'] = request.user.groups.all().values_list('id', flat=True)
         data['language'] = {'id': profile.language.id, 'name':profile.language.name}
         data['about'] = profile.about
+        data['linkedin'] = profile.linkedIn
         roles = Role.objects.filter(status=True)
 
         k = []
         
         for role in roles:
             a = {
-                'id':role.id, 'name':role.name, 'opted': False, 'activate': False, 'status': False, 'notes':'', 'history': []
+                'id':role.id, 'name':role.name, 'opted': False, 'active': False, 'status': False, 'notes':'', 'history': []
             }
             role_maping = UserRoleMaping.objects.filter(user=request.user, role=role).exclude(status=UserRoleMaping.Status.REJECTED).last()
             if role_maping:
-                a['opted'] = True
+                a['opted'] = True if role_maping.status >1 else False
                 a['activate'] = role_maping.active
-                a['status'] = [x[1] for x in UserRoleMaping.Status.choices if x[0]==role_maping.status][0]
+                a['status'] = role_maping.get_status_display()
                 a['description'] = role_maping.notes
 
             history = RoleHistory.objects.filter(role=role, user=request.user).values()
@@ -70,27 +70,45 @@ class UserProfileViewSet(viewsets.ViewSet):
 
 
     def post(self, request):
-        userkeys = ["email", "first_name", "last_name", ] 
-        profile_direct = ["terms", "reference", "dob", "mobile", "pincode",  "linkedIn", "step", 'abount']
-        profile_process1 = ["gender", "country", "state", "city","profession","language",]
-        data = request.data['data']
-        print(data)
-        userDict = {}   
-        profileDict = {}
-        for key, val in data.items():
-            if key in userkeys: userDict[key]=val
-            elif key in profile_direct: profileDict[key]=val
-            elif key in profile_process1: profileDict[key]=val['id']
-            elif key=='preferences':
-                pass
-            elif key=='roles':
-                pass
+        try:
+            userkeys = ["email", "first_name", "last_name", ] 
+            profile_direct = ["terms", "reference", "dob", "mobile", "pincode",  "linkedIn", "step", 'abount']
+            profile_process1 = ["gender","profession","language",]
+            profile_process2 = [ "country", "state", "city"]
+            data = request.data['data']
+            print(data)
+            userDict = {}   
+            profileDict = {}
+            for key, val in data.items():
+                if key in userkeys: userDict[key]=val
+                elif key in profile_direct: profileDict[key]=val
+                elif key in profile_process1: profileDict[key]=val['id']
+                elif key in profile_process2:
+                    print(val['name'])
+                    profileDict['location'] = Location.objects.filter(city__contains=val['name']).first()
+                    
+                elif key=='preferences':
+                    prefer, created = NotificationPreference.objects.get_or_create(user_id=request.user.id)
+                    if val.get('email') is not None: prefer.email=val.get('email')
+                    elif val.get('sms') is not None: prefer.sms=val.get('sms')
+                    elif val.get('watsapp') is not None: prefer.watsapp=val.get('watsapp')
+                    prefer.save()
 
+                elif key=='roles':
+                    for role in val:
+                        urm, created = UserRoleMaping.objects.get_or_create(user_id=request.user.id, role_id=role['id'])
+                        if not created and role.get('opted'): urm.status = UserRoleMaping.Status.OPTED
+                        else: urm.status = UserRoleMaping.Status.NOT_OPTED
+                        urm.save()
 
-
-        print(userDict)
-        print(profileDict)
-        return Response({})
+            obj = Profile.objects.filter(user_id=request.user.id).update(**profileDict)
+            print(obj)
+            print(userDict)
+            print(profileDict)            
+            return Response({})
+        except Exception as e:
+            print(e)
+            return None
     
 
 class LocationViewset(viewsets.ViewSet):
