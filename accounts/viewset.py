@@ -20,14 +20,14 @@ class UserProfileViewSet(viewsets.ViewSet):
         data = User.objects.filter(id=request.user.id).values('username', 'email', 'first_name', 'last_name', 'date_joined').first()
         profile = Profile.objects.filter(user=request.user).first()
         data['terms'] = profile.terms
-        data['reference'] = profile.reference.email
+        data['reference'] = profile.reference.email if profile.reference else ''
         data['dob'] = profile.dob
         data['mobile'] = profile.mobile
         data['gender'] = [{'id':g[0], 'name':g[1]} for g in profile.Gender.choices if g[0]==profile.gender][0]
         data['genders'] = [{'id':g[0], 'name':g[1]} for g in profile.Gender.choices]
-        data['country'] = profile.location.country
-        data['state'] = profile.location.state
-        data['city'] = profile.location.city
+        data['country'] = profile.location.country if profile.location else ''
+        data['state'] = profile.location.state if profile.location else ''
+        data['city'] = profile.location.city if profile.location else ''
         data['pincode'] = profile.pincode
         data['professions'] = [{'id':p[0], 'name':p[1]} for p in profile.Profession.choices]
         data['profession'] = [{'id':p[0], 'name':p[1]} for p in profile.Profession.choices if p[0]==profile.profession][0]
@@ -35,7 +35,7 @@ class UserProfileViewSet(viewsets.ViewSet):
         data['education'] = [{'id':e[0], 'name':e[1]} for e in profile.Education.choices if e[0]==profile.education][0]
         data['step'] = profile.step
         data['groups'] = request.user.groups.all().values_list('id', flat=True)
-        data['language'] = {'id': profile.language.id, 'name':profile.language.name}
+        data['language'] = {'id': profile.language.id, 'name':profile.language.name} if profile.language else {}
         data['about'] = profile.about
         data['linkedIn'] = profile.linkedIn
         roles = Role.objects.filter(status=True)
