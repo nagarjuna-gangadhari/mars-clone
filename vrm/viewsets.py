@@ -8,7 +8,7 @@ from rest_framework import permissions
 from accounts.models import User
 from django.contrib.auth.models import Group
 from vrm.models.course import Course
-from utils.models import Language
+from taxonomy.models import Language
 
 
 

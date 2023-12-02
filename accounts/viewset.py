@@ -5,10 +5,9 @@ from rest_framework.response import Response
 from rest_framework import permissions
 
 #-----models-----------------------------------
-from accounts.models import User, Profile, Role, UserRoleMaping, Location, RoleHistory,NotificationPreference
+from accounts.models import User, Profile, Role, UserRoleMaping, RoleHistory,NotificationPreference
 from django.contrib.auth.models import Group
-from vrm.models.course import Course
-from utils.models import Language
+from taxonomy.models import Language, Location
 
 class UserProfileViewSet(viewsets.ViewSet):
     """

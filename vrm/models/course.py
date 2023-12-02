@@ -3,11 +3,10 @@
 '''
 
 from django.db import models
-from utils.models import Ay
 from vrm.models.center import Center
-from utils.choicess import *
+from taxonomy.choicess import *
 from django.core.validators import MaxValueValidator, MinValueValidator
-from utils.models import Language
+from taxonomy.models import *
 from django.conf import settings
 from accounts.models import User
  

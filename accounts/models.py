@@ -3,6 +3,8 @@ from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
 from .validators import UnicodeUsernameIdValidator
 from django.conf import settings
+from taxonomy.models import BaseModel
+
 
 class User(AbstractUser):
     username_validator = UnicodeUsernameIdValidator()
@@ -32,18 +34,8 @@ class User(AbstractUser):
     def __str__(self):
         return str(self.username)
 
-class TimeStampedModel(models.Model):
-    """
-    An abstract base class model that provides self-updating
-    ``created_at`` and ``updated_at`` fields.
-    """
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
 
-    class Meta:
-        abstract = True
-
-class Profile(TimeStampedModel):
+class Profile(BaseModel):
     class Profession(models.IntegerChoices):
         SELF_EMPLOYED = 1
         HOME_MAKER = 2
@@ -55,7 +47,7 @@ class Profile(TimeStampedModel):
         PSU = 8
         STUDENT = 9
         TEACHING = 10
-        OTHERS = 100
+        OTHERS = 99
 
     class Education(models.IntegerChoices):
         PHD = 1
@@ -63,12 +55,12 @@ class Profile(TimeStampedModel):
         UNDER_GRADUATION = 3
         dIPLOMA = 4
         HIGH_SCHOOL = 5
-        OTHERS = 100
+        OTHERS = 99
 
     class Gender(models.IntegerChoices):
         Male = 1
         Female = 2
-        Others = 100
+        Others = 99
 
     user = models.OneToOneField("accounts.User", related_name="user", on_delete=models.CASCADE)
     terms = models.BooleanField(default=False)
@@ -76,27 +68,22 @@ class Profile(TimeStampedModel):
     dob = models.DateField(null=True, blank=True)
     mobile = models.CharField(max_length=12, null=True, blank=True)
     gender = models.IntegerField(choices=Gender.choices, default=100)
-    location = models.ForeignKey("accounts.Location", null=True, blank=True, related_name="location", on_delete=models.DO_NOTHING)
+    location = models.ForeignKey("taxonomy.Location", null=True, blank=True, related_name="location", on_delete=models.DO_NOTHING)
     pincode = models.IntegerField(null=True, blank=True)
     profession = models.IntegerField(choices=Profession.choices, default=100)
     education = models.IntegerField(choices=Education.choices, default=100)
     linkedIn = models.CharField(max_length=256, null=True, blank=True)
     step = models.IntegerField(default=1)   
     about = models.TextField(null=True, blank=True)
-    language = models.ForeignKey('utils.Language', null=True, blank=True, on_delete=models.DO_NOTHING)
+    language = models.ForeignKey('taxonomy.Language', null=True, blank=True, on_delete=models.DO_NOTHING)
 
 
     def __str__(self):
         return "%s-%s :%s" % (self.id, self.user.id, self.user.email)
 
 
-class Location(TimeStampedModel):
-    country = models.CharField(max_length=20, null=False, blank=False)
-    state = models.CharField(max_length=128, null=False, blank=False)
-    city = models.CharField(max_length=128, null=False, blank=False)
 
-
-class Role(TimeStampedModel):
+class Role(BaseModel):
 
     name = models.CharField(max_length=128, null=False, blank=False)
     type = models.IntegerField('Type', 'INTERNAL EXTERNAL', null=True, blank=True)
@@ -106,7 +93,7 @@ class Role(TimeStampedModel):
         return str(self.pk)
 
 
-class UserRoleMaping(TimeStampedModel):
+class UserRoleMaping(BaseModel):
 
     class Status(models.IntegerChoices):
         NOT_OPTED = 1
@@ -115,7 +102,7 @@ class UserRoleMaping(TimeStampedModel):
         SCHEDULED = 4
         IN_REVIEW = 5
         RECOMMENDED = 6
-        REJECTED = 100
+        REJECTED = 99
 
     user = models.ForeignKey('accounts.User', related_name='role_map_user', on_delete=models.CASCADE)
     role = models.ForeignKey('accounts.Role', related_name='role_maping', on_delete=models.CASCADE)
@@ -132,12 +119,11 @@ class UserRoleMaping(TimeStampedModel):
     
 
 class UserRoleMeeting(models.Model):
-
     class Outcome(models.IntegerChoices):
         SCHEDULED = 1
         ASSAIGNED = 2
         COMPLETED = 3
-        CANCELLED = 100
+        CANCELLED = 99
         
     user = models.ForeignKey(User, null=True, blank=True, on_delete=models.DO_NOTHING)
     role = models.ForeignKey(Role, null=True, blank=True, default=None, on_delete=models.CASCADE)
@@ -153,7 +139,7 @@ class UserRoleMeeting(models.Model):
         return str(self.pk)
 
 
-class RoleHistory(TimeStampedModel):
+class RoleHistory(BaseModel):
     role = models.ForeignKey('accounts.Role', related_name='role_history', on_delete=models.CASCADE)
     user = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
     role_map = models.ForeignKey('accounts.UserRoleMaping', null=True, blank=True, on_delete=models.DO_NOTHING)
@@ -161,8 +147,7 @@ class RoleHistory(TimeStampedModel):
     map_object = models.JSONField(null=True, blank=True)
 
 
-
-class NotificationPreference(TimeStampedModel):
+class NotificationPreference(BaseModel):
     user = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
     email = models.BooleanField(default=False)
     sms = models.BooleanField(default=False)

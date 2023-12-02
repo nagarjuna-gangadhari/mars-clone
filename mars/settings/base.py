@@ -38,12 +38,12 @@ DJANGO_APPS = [
 ]
 
 LOCAL_APPS = [
-    'utils',
+    'taxonomy',
     'accounts',
+    'partner',
     'vrm',
-    'query',
-    'notification',
     'chat',
+    
 ]
 
 INSTALLED_APPS = DJANGO_APPS + LOCAL_APPS

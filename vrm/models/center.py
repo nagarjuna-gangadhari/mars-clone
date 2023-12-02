@@ -1,6 +1,6 @@
 from django.db import models
-from utils.models import Ay
-from utils.choicess import *
+from taxonomy.models import Ay
+from taxonomy.choicess import *
 from accounts.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
 
