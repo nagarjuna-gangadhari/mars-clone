@@ -38,7 +38,7 @@ class UserProfileViewSet(viewsets.ViewSet):
         data['groups'] = request.user.groups.all().values_list('id', flat=True)
         data['language'] = {'id': profile.language.id, 'name':profile.language.name}
         data['about'] = profile.about
-        data['linkedin'] = profile.linkedIn
+        data['linkedIn'] = profile.linkedIn
         roles = Role.objects.filter(status=True)
 
         k = []
@@ -71,8 +71,8 @@ class UserProfileViewSet(viewsets.ViewSet):
 
     def post(self, request):
         try:
-            userkeys = ["email", "first_name", "last_name", ] 
-            profile_direct = ["terms", "reference", "dob", "mobile", "pincode",  "linkedIn", "step", 'abount']
+            userkeys = ["email", "first_name", "last_name"] 
+            profile_direct = ["terms", "reference", "dob", "mobile", "pincode",  "linkedIn", "step", 'about']
             profile_process1 = ["gender","profession","language",]
             profile_process2 = [ "country", "state", "city"]
             data = request.data['data']
@@ -84,7 +84,6 @@ class UserProfileViewSet(viewsets.ViewSet):
                 elif key in profile_direct: profileDict[key]=val
                 elif key in profile_process1: profileDict[key]=val['id']
                 elif key in profile_process2:
-                    print(val['name'])
                     profileDict['location'] = Location.objects.filter(city__contains=val['name']).first()
                     
                 elif key=='preferences':
@@ -100,9 +99,8 @@ class UserProfileViewSet(viewsets.ViewSet):
                         if not created and role.get('opted'): urm.status = UserRoleMaping.Status.OPTED
                         else: urm.status = UserRoleMaping.Status.NOT_OPTED
                         urm.save()
-
-            obj = Profile.objects.filter(user_id=request.user.id).update(**profileDict)
-            print(obj)
+            if userDict: obj = User.objects.filter(id=request.user.id).update(**userDict)
+            if profileDict: obj = Profile.objects.filter(user_id=request.user.id).update(**profileDict)
             print(userDict)
             print(profileDict)            
             return Response({})
