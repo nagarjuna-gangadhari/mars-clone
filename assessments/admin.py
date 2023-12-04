@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models.base import *
+from .models.builder import *
 from django.apps import apps
 
 

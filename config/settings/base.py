@@ -61,7 +61,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'mars.urls'
+ROOT_URLCONF = 'config.urls'
 
 CHANNEL_LAYERS = {
     'default': {
@@ -103,8 +103,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'mars.wsgi.application'
-ASGI_APPLICATION = "mars.asgi.application"
+WSGI_APPLICATION = 'config.wsgi.application'
+ASGI_APPLICATION = "config.asgi.application"
 
 
 # Database

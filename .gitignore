@@ -2,6 +2,6 @@
 /env
 /venv
 .env
-/migrations
+*/migrations
 *.pyc
 db.sqlite3

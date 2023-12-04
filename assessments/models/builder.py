@@ -55,6 +55,30 @@ class Question(BaseModel):
         return str(self.pk)
 
 
+class MultipleChoiceOptions(BaseModel):
+    question = models.OneToOneField(Question, on_delete=models.CASCADE)
+    option_a = models.CharField(max_length=1024, null=True, blank=True)
+    option_b = models.CharField(max_length=1024, null=True, blank=True)
+    option_c = models.CharField(max_length=1024, null=True, blank=True)
+    option_d = models.CharField(max_length=1024, null=True, blank=True)
+
+    def __str__(self):
+        return str(self.pk)
+
+
+class PatrenOptions(BaseModel):
+
+    question = models.OneToOneField(Question, on_delete=models.CASCADE)
+    option_1 = models.CharField(max_length=1024, null=True, blank=True)
+    option_2 = models.CharField(max_length=1024, null=True, blank=True)
+    option_3 = models.CharField(max_length=1024, null=True, blank=True)
+    option_4 = models.CharField(max_length=1024, null=True, blank=True)
+    option_a = models.CharField(max_length=1024, null=True, blank=True)
+    option_b = models.CharField(max_length=1024, null=True, blank=True)
+    option_c = models.CharField(max_length=1024, null=True, blank=True)
+    option_d = models.CharField(max_length=1024, null=True, blank=True)
+
+
 class Answer(models.Model):
 
     """
@@ -74,7 +98,7 @@ class Answer(models.Model):
             }
     """
 
-    question = models.ForeignKey(Question, on_delete=models.DO_NOTHING)
+    question = models.ForeignKey(Question, on_delete=models.DO_NOTHING, related_name='qsans')
     # The answer submitted by the user.
     answer = models.TextField(null=True, blank=True)
     correct = models.BooleanField(default=False)
@@ -115,23 +139,44 @@ class QuestionPaper(models.Model):
         return str(self.pk)
 
 
+class Assessment(BaseModel):
+    """Assessments are used to track the progress of a student in their learning journey."""
+
+    class Type(models.IntegerChoices):
+        ONLINE = 1
+        OFFLINE = 2
+
+    question_set = models.ForeignKey(QuestionPaper, on_delete=models.DO_NOTHING, related_name='assQst')
+    description = models.TextField("Description")
+    start = models.DateTimeField()
+    end = models.DateTimeField(auto_now=True)
+    completed = models.BooleanField(default=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    score = models.FloatField(null=True, blank=True)
+    mode = models.IntegerField(choices=Type.choices, default=1)
+    approved = models.BooleanField(default=True)
+
+    def __str__(self):
+        return str(self.pk)
+
+
 class AnswerPaper(models.Model):
     """A answer paper for a student -- one per student typically."""
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    question_paper = models.ForeignKey(QuestionPaper, on_delete=models.CASCADE)
-    answers = models.ManyToManyField(Answer)
-    attempt_number = models.IntegerField()
-    start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='examstudent')
+    question_paper = models.ForeignKey(Assessment, on_delete=models.CASCADE, related_name='qstoans')
+    answers = models.ManyToManyField(Answer, related_name='aspans')
+    attempt_number = models.IntegerField(null=True, blank=True)
+    start_time = models.DateTimeField(null=True, blank=True)
+    end_time = models.DateTimeField(null=True, blank=True)
 
     # User's IP which is logged.
     user_ip = models.CharField(max_length=255)
 
-    # Teacher comments on the question paper.
-    comments = models.TextField(null=True, null=True)
+    # Teacher comments on the question paper.Answer
+    comments = models.TextField(null=True, blank=True)
 
-    marks_obtained = models.FloatField(null=True, null=True, default=0.0)
+    marks_obtained = models.FloatField(null=True, blank=True, default=0.0)
     passed = models.BooleanField(default=True)
     extra_time = models.FloatField("Additional time in mins", default=0.0)
     is_special = models.BooleanField(default=False)
@@ -221,28 +266,6 @@ class AnswerPaper(models.Model):
 
     def get_questions(self):
         return self.questions.filter(active=True)
-
-    def __str__(self):
-        return str(self.pk)
-
-
-class Assessment(BaseModel):
-    """Assessments are used to track the progress of a student in their learning journey."""
-
-    class Type(models.IntegerChoices):
-        ONLINE = 1
-        OFFLINE = 2
-
-    question_set = models.ForeignKey(QuestionPaper)
-    answer = models.ManyToManyField(Answer)
-    description = models.TextField("Description")
-    start = models.DateTimeField()
-    end = models.DateTimeField(auto_now=True)
-    completed = models.BooleanField(default=False)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    score = models.FloatField(null=True, blank=True)
-    mode = models.IntegerField(choices=Type.choices, default=1)
-    approved = models.BooleanField(default=True)
 
     def __str__(self):
         return str(self.pk)
