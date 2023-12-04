@@ -76,7 +76,9 @@ class Profile(BaseModel):
     step = models.IntegerField(default=1)   
     about = models.TextField(null=True, blank=True)
     language = models.ForeignKey('taxonomy.Language', null=True, blank=True, on_delete=models.DO_NOTHING)
-
+    is_email_verified = models.BooleanField(default=False)
+    activation_key = models.CharField(max_length=255, blank=True, null=True)
+    key_expiry_time = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
         return "%s-%s :%s" % (self.id, self.user.id, self.user.email)

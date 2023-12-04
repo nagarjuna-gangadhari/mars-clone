@@ -43,6 +43,7 @@ LOCAL_APPS = [
     'partner',
     'vrm',
     'chat',
+    'assessments',
     
 ]
 
